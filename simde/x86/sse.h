@@ -1725,6 +1725,16 @@ simde_mm_cmpneq_ps (simde__m128 a, simde__m128 b) {
       r_.altivec_f32 = HEDLEY_REINTERPRET_CAST(SIMDE_POWER_ALTIVEC_VECTOR(float), vec_nor(r_.altivec_f32, r_.altivec_f32));
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vfcmp_cune_s(a_.lsx_f32, b_.lsx_f32);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vfloat32m1_t va = SIMDE_RVV_VLE32_F32M1(a_.f32, vl);
+        vfloat32m1_t vb = SIMDE_RVV_VLE32_F32M1(b_.f32, vl);
+        vbool32_t mask = SIMDE_RVV_VMNOT_M_B32(SIMDE_RVV_VMFEQ_VV_F32M1(va, vb, vl), vl);
+        vuint32m1_t zeros = SIMDE_RVV_VMV_V_X_U32M1(0, vl);
+        vuint32m1_t vr = SIMDE_RVV_VMERGE_VXM_U32M1(mask, zeros, UINT32_MAX, vl);
+        SIMDE_RVV_VSE32_U32M1(r_.u32, vr, vl);
+      }
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.i32 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.i32), (a_.f32 != b_.f32));
     #else
@@ -1872,6 +1882,18 @@ simde_mm_cmpord_ps (simde__m128 a, simde__m128 b) {
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vfcmp_cun_s(a_.lsx_f32, b_.lsx_f32);
       r_.lsx_i64 = __lsx_vnor_v(r_.lsx_i64, r_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vfloat32m1_t va = SIMDE_RVV_VLE32_F32M1(a_.f32, vl);
+        vfloat32m1_t vb = SIMDE_RVV_VLE32_F32M1(b_.f32, vl);
+        vbool32_t mask_a = SIMDE_RVV_VMFEQ_VV_F32M1(va, va, vl);
+        vbool32_t mask_b = SIMDE_RVV_VMFEQ_VV_F32M1(vb, vb, vl);
+        vbool32_t mask = SIMDE_RVV_VMAND_MM_B32(mask_a, mask_b, vl);
+        vuint32m1_t zeros = SIMDE_RVV_VMV_V_X_U32M1(0, vl);
+        vuint32m1_t vr = SIMDE_RVV_VMERGE_VXM_U32M1(mask, zeros, UINT32_MAX, vl);
+        SIMDE_RVV_VSE32_U32M1(r_.u32, vr, vl);
+      }
     #elif defined(simde_math_isnanf)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
@@ -1917,6 +1939,18 @@ simde_mm_cmpunord_ps (simde__m128 a, simde__m128 b) {
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i32 = HEDLEY_REINTERPRET_CAST(v4i32, __lsx_vfcmp_cun_s(a_.lsx_f32, b_.lsx_f32));
       // TODO: change when https://gcc.gnu.org/bugzilla/show_bug.cgi?id=123759 is resolved
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vfloat32m1_t va = SIMDE_RVV_VLE32_F32M1(a_.f32, vl);
+        vfloat32m1_t vb = SIMDE_RVV_VLE32_F32M1(b_.f32, vl);
+        vbool32_t mask_a = SIMDE_RVV_VMFEQ_VV_F32M1(va, va, vl);
+        vbool32_t mask_b = SIMDE_RVV_VMFEQ_VV_F32M1(vb, vb, vl);
+        vbool32_t mask = SIMDE_RVV_VMNOT_M_B32(SIMDE_RVV_VMAND_MM_B32(mask_a, mask_b, vl), vl);
+        vuint32m1_t zeros = SIMDE_RVV_VMV_V_X_U32M1(0, vl);
+        vuint32m1_t vr = SIMDE_RVV_VMERGE_VXM_U32M1(mask, zeros, UINT32_MAX, vl);
+        SIMDE_RVV_VSE32_U32M1(r_.u32, vr, vl);
+      }
     #elif defined(simde_math_isnanf)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
@@ -3968,6 +4002,14 @@ simde_mm_rcp_ps (simde__m128 a) {
       r_.altivec_f32 = vec_re(a_.altivec_f32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_f32 = __lsx_vfrecip_s(a_.lsx_f32);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vfloat32m1_t va = SIMDE_RVV_VLE32_F32M1(a_.f32, vl);
+        vfloat32m1_t vone = SIMDE_RVV_VFMV_V_F_F32M1(1.0f, vl);
+        vfloat32m1_t vr = SIMDE_RVV_VFDIV_VV_F32M1(vone, va, vl);
+        SIMDE_RVV_VSE32_F32M1(r_.f32, vr, vl);
+      }
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       r_.f32 = 1.0f / a_.f32;
     #elif defined(SIMDE_IEEE754_STORAGE)
@@ -4041,6 +4083,15 @@ simde_mm_rsqrt_ps (simde__m128 a) {
       r_.altivec_f32 = vec_rsqrte(a_.altivec_f32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_f32 = __lsx_vfrsqrt_s(a_.lsx_f32);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vfloat32m1_t va = SIMDE_RVV_VLE32_F32M1(a_.f32, vl);
+        vfloat32m1_t vsqrt = SIMDE_RVV_VFSQRT_V_F32M1(va, vl);
+        vfloat32m1_t vone = SIMDE_RVV_VFMV_V_F_F32M1(1.0f, vl);
+        vfloat32m1_t vr = SIMDE_RVV_VFDIV_VV_F32M1(vone, vsqrt, vl);
+        SIMDE_RVV_VSE32_F32M1(r_.f32, vr, vl);
+      }
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.wasm_v128 = wasm_f32x4_div(simde_mm_set1_ps(1.0f), wasm_f32x4_sqrt(a_.wasm_v128));
     #elif defined(SIMDE_IEEE754_STORAGE)

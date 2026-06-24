@@ -274,6 +274,7 @@
   #define SIMDE_RVV_VMSLT_VX_I32M1(a, s, vl)   vmslt_vx_i32m1_b32((a), (s), (vl))
   #define SIMDE_RVV_VMSLT_VX_I64M1(a, s, vl)   vmslt_vx_i64m1_b64((a), (s), (vl))
   #define SIMDE_RVV_VMSLTU_VV_U8M1(a, b, vl)   vmsltu_vv_u8m1_b8((a), (b), (vl))
+  #define SIMDE_RVV_VMSNE_VX_U16M1(a, s, vl)  vmsne_vx_u16m1_b16((a), (s), (vl))
   #define SIMDE_RVV_VMFEQ_VV_F32M1(a, b, vl)   vmfeq_vv_f32m1_b32((a), (b), (vl))
   #define SIMDE_RVV_VMFEQ_VV_F64M1(a, b, vl)   vmfeq_vv_f64m1_b64((a), (b), (vl))
   #define SIMDE_RVV_VMFLT_VV_F32M1(a, b, vl)   vmflt_vv_f32m1_b32((a), (b), (vl))
@@ -298,6 +299,7 @@
   #define SIMDE_RVV_VMSLT_VX_I32M1(a, s, vl)   __riscv_vmslt_vx_i32m1_b32((a), (s), (vl))
   #define SIMDE_RVV_VMSLT_VX_I64M1(a, s, vl)   __riscv_vmslt_vx_i64m1_b64((a), (s), (vl))
   #define SIMDE_RVV_VMSLTU_VV_U8M1(a, b, vl)   __riscv_vmsltu_vv_u8m1_b8((a), (b), (vl))
+  #define SIMDE_RVV_VMSNE_VX_U16M1(a, s, vl)  __riscv_vmsne_vx_u16m1_b16((a), (s), (vl))
   #define SIMDE_RVV_VMFEQ_VV_F32M1(a, b, vl)   __riscv_vmfeq_vv_f32m1_b32((a), (b), (vl))
   #define SIMDE_RVV_VMFEQ_VV_F64M1(a, b, vl)   __riscv_vmfeq_vv_f64m1_b64((a), (b), (vl))
   #define SIMDE_RVV_VMFLT_VV_F32M1(a, b, vl)   __riscv_vmflt_vv_f32m1_b32((a), (b), (vl))
@@ -345,6 +347,7 @@
   #define SIMDE_RVV_VMERGE_VXM_I64M1(mask, fv, ts, vl)  vmerge_vxm_i64m1((fv), (ts), (mask), (vl))
   #define SIMDE_RVV_VMERGE_VXM_U32M1(mask, fv, ts, vl)  vmerge_vxm_u32m1((fv), (ts), (mask), (vl))
   #define SIMDE_RVV_VMERGE_VXM_U64M1(mask, fv, ts, vl)  vmerge_vxm_u64m1((fv), (ts), (mask), (vl))
+  #define SIMDE_RVV_VMERGE_VVM_U16M1(mask, fv, tv, vl)  vmerge_vvm_u16m1((fv), (tv), (mask), (vl))
   #define SIMDE_RVV_VMV_V_X_I8M1(s, vl)                 vmv_v_x_i8m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_I16M1(s, vl)                vmv_v_x_i16m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_I32M1(s, vl)                vmv_v_x_i32m1((s), (vl))
@@ -352,6 +355,8 @@
   #define SIMDE_RVV_VMV_V_X_U8M1(s, vl)                 vmv_v_x_u8m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_U32M1(s, vl)                vmv_v_x_u32m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_U64M1(s, vl)                vmv_v_x_u64m1((s), (vl))
+  #define SIMDE_RVV_VFMV_V_F_F32M1(s, vl)              vfmv_v_f_f32m1((s), (vl))
+  #define SIMDE_RVV_VFMV_V_F_F64M1(s, vl)              vfmv_v_f_f64m1((s), (vl))
 #else
   #define SIMDE_RVV_VMERGE_VXM_I8M1(mask, fv, ts, vl)   __riscv_vmerge_vxm_i8m1((fv), (ts), (mask), (vl))
   #define SIMDE_RVV_VMERGE_VXM_I16M1(mask, fv, ts, vl)  __riscv_vmerge_vxm_i16m1((fv), (ts), (mask), (vl))
@@ -359,6 +364,7 @@
   #define SIMDE_RVV_VMERGE_VXM_I64M1(mask, fv, ts, vl)  __riscv_vmerge_vxm_i64m1((fv), (ts), (mask), (vl))
   #define SIMDE_RVV_VMERGE_VXM_U32M1(mask, fv, ts, vl)  __riscv_vmerge_vxm_u32m1((fv), (ts), (mask), (vl))
   #define SIMDE_RVV_VMERGE_VXM_U64M1(mask, fv, ts, vl)  __riscv_vmerge_vxm_u64m1((fv), (ts), (mask), (vl))
+  #define SIMDE_RVV_VMERGE_VVM_U16M1(mask, fv, tv, vl)  __riscv_vmerge_vvm_u16m1((fv), (tv), (mask), (vl))
   #define SIMDE_RVV_VMV_V_X_I8M1(s, vl)                 __riscv_vmv_v_x_i8m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_I16M1(s, vl)                __riscv_vmv_v_x_i16m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_I32M1(s, vl)                __riscv_vmv_v_x_i32m1((s), (vl))
@@ -366,6 +372,8 @@
   #define SIMDE_RVV_VMV_V_X_U8M1(s, vl)                 __riscv_vmv_v_x_u8m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_U32M1(s, vl)                __riscv_vmv_v_x_u32m1((s), (vl))
   #define SIMDE_RVV_VMV_V_X_U64M1(s, vl)                __riscv_vmv_v_x_u64m1((s), (vl))
+  #define SIMDE_RVV_VFMV_V_F_F32M1(s, vl)              __riscv_vfmv_v_f_f32m1((s), (vl))
+  #define SIMDE_RVV_VFMV_V_F_F64M1(s, vl)              __riscv_vfmv_v_f_f64m1((s), (vl))
 #endif
 
 /* ======================================================================
@@ -488,6 +496,18 @@
   #define SIMDE_RVV_VMUL_VV_I32M1(a, b, vl)       __riscv_vmul_vv_i32m1((a), (b), (vl))
   #define SIMDE_RVV_VWMULU_VV_U32M2(a, b, vl)     __riscv_vwmulu_vv_u32m2((a), (b), (vl))
   #define SIMDE_RVV_VNSRL_WX_U16M1(w, s, vl)      __riscv_vnsrl_wx_u16m1((w), (s), (vl))
+#endif
+
+/* ======================================================================
+ * Float/int conversion
+ * ====================================================================== */
+
+#if defined(SIMDE_RISCV_V09_COMPAT)
+  #define SIMDE_RVV_VFCVT_F_X_V_F32M1(a, vl)    vfcvt_f_x_v_f32m1((a), (vl))
+  #define SIMDE_RVV_VFCVT_X_F_V_I32M1(a, vl)    vfcvt_x_f_v_i32m1((a), (vl))
+#else
+  #define SIMDE_RVV_VFCVT_F_X_V_F32M1(a, vl)    __riscv_vfcvt_f_x_v_f32m1((a), (vl))
+  #define SIMDE_RVV_VFCVT_X_F_V_I32M1(a, vl)    __riscv_vfcvt_x_f_v_i32m1((a), (vl))
 #endif
 
 /* ======================================================================
