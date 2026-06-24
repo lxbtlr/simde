@@ -399,12 +399,18 @@
 #endif
 
 #if !defined(SIMDE_RISCV_V_NATIVE) && !defined(SIMDE_RISCV_V_NO_NATIVE) && !defined(SIMDE_NO_NATIVE)
-  #if defined(SIMDE_ARCH_RISCV_V) && defined(__riscv_v_fixed_vlen)
-    #define SIMDE_RISCV_V_NATIVE
+  #if defined(SIMDE_ARCH_RISCV_V)
+    #if defined(__riscv_v_fixed_vlen)
+      #define SIMDE_RISCV_V_NATIVE
+    #elif defined(__riscv_vector) || defined(SIMDE_RISCV_V09_FORCE)
+      #define SIMDE_RISCV_V_NATIVE
+      #define SIMDE_RISCV_V09_COMPAT
+    #endif
   #endif
 #endif
 #if defined(SIMDE_RISCV_V_NATIVE)
   #include <riscv_vector.h>
+  #include "simde-riscv-v-compat.h"
 #endif
 
 #if !defined(SIMDE_WASM_SIMD128_NATIVE) && !defined(SIMDE_WASM_SIMD128_NO_NATIVE) && !defined(SIMDE_NO_NATIVE)

@@ -375,6 +375,24 @@ simde_mm_shuffle_epi8 (simde__m128i a, simde__m128i b) {
       __m128i b1_ = __lsx_vslti_b(b_.lsx_i64, 0);
       r_.lsx_i64 = __lsx_vshuf_b(a_.lsx_i64, a_.lsx_i64, __lsx_vandi_b(b_.lsx_i64, 15));
       r_.lsx_i64 = __lsx_vand_v(r_.lsx_i64, __lsx_vnor_v(b1_, b1_));
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E8M1(16);
+        vuint8m1_t va = SIMDE_RVV_VLE8_U8M1(a_.u8, vl);
+        vint8m1_t vb_signed = SIMDE_RVV_VLE8_I8M1(b_.i8, vl);
+        vuint8m1_t vb = SIMDE_RVV_VLE8_U8M1(b_.u8, vl);
+        /* Index = b & 0x0F */
+        vuint8m1_t vidx = SIMDE_RVV_VAND_VV_U8M1(vb, SIMDE_RVV_VMV_V_X_U8M1(0x0F, vl), vl);
+        /* Gather: result[i] = a[vidx[i]] */
+        vuint8m1_t gathered = SIMDE_RVV_VRGATHER_VV_U8M1(va, vidx, vl);
+        /* Arithmetic right shift by 7: 0x00 where positive, 0xFF where negative */
+        vint8m1_t sign_ext = SIMDE_RVV_VSRA_VX_I8M1(vb_signed, 7, vl);
+        /* NOT to get 0xFF where positive (keep), 0x00 where negative (zero out) */
+        vuint8m1_t keep_mask = SIMDE_RVV_VNOT_V_U8M1(SIMDE_RVV_VREINTERPRET_U8M1_I8M1(sign_ext), vl);
+        /* AND to zero out elements where bit 7 was set */
+        vuint8m1_t vr = SIMDE_RVV_VAND_VV_U8M1(gathered, keep_mask, vl);
+        SIMDE_RVV_VSE8_U8M1(r_.u8, vr, vl);
+      }
     #else
       for (size_t i = 0 ; i < (sizeof(r_.i8) / sizeof(r_.i8[0])) ; i++) {
         r_.i8[i] = a_.i8[b_.i8[i] & 15] & (~(b_.i8[i]) >> 7);

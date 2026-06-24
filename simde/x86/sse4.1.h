@@ -534,6 +534,16 @@ simde_mm_cmpeq_epi64 (simde__m128i a, simde__m128i b) {
       r_.lsx_i64 = __lsx_vseq_d(a_.lsx_i64, b_.lsx_i64);
     #elif defined(SIMDE_WASM_SIMD128_NATIVE)
       r_.wasm_v128 = wasm_i64x2_eq(a_.wasm_v128, b_.wasm_v128);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E64M1(2);
+        vint64m1_t va = SIMDE_RVV_VLE64_I64M1(a_.i64, vl);
+        vint64m1_t vb = SIMDE_RVV_VLE64_I64M1(b_.i64, vl);
+        vbool64_t mask = SIMDE_RVV_VMSEQ_VV_I64M1(va, vb, vl);
+        vint64m1_t zeros = SIMDE_RVV_VMV_V_X_I64M1(0, vl);
+        vint64m1_t vr = SIMDE_RVV_VMERGE_VXM_I64M1(mask, zeros, -1, vl);
+        SIMDE_RVV_VSE64_I64M1(r_.i64, vr, vl);
+      }
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.i64 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.i64), a_.i64 == b_.i64);
     #else
@@ -1701,6 +1711,14 @@ simde_mm_max_epi8 (simde__m128i a, simde__m128i b) {
       r_.altivec_i8 = vec_max(a_.altivec_i8, b_.altivec_i8);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmax_b(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E8M1(16);
+        vint8m1_t va = SIMDE_RVV_VLE8_I8M1(a_.i8, vl);
+        vint8m1_t vb = SIMDE_RVV_VLE8_I8M1(b_.i8, vl);
+        vint8m1_t vr = SIMDE_RVV_VMAX_VV_I8M1(va, vb, vl);
+        SIMDE_RVV_VSE8_I8M1(r_.i8, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i8) / sizeof(r_.i8[0])) ; i++) {
@@ -1738,6 +1756,14 @@ simde_mm_max_epi32 (simde__m128i a, simde__m128i b) {
       r_.altivec_i32 = vec_max(a_.altivec_i32, b_.altivec_i32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmax_w(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vint32m1_t va = SIMDE_RVV_VLE32_I32M1(a_.i32, vl);
+        vint32m1_t vb = SIMDE_RVV_VLE32_I32M1(b_.i32, vl);
+        vint32m1_t vr = SIMDE_RVV_VMAX_VV_I32M1(va, vb, vl);
+        SIMDE_RVV_VSE32_I32M1(r_.i32, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i32) / sizeof(r_.i32[0])) ; i++) {
@@ -1775,6 +1801,14 @@ simde_mm_max_epu16 (simde__m128i a, simde__m128i b) {
       r_.altivec_u16 = vec_max(a_.altivec_u16, b_.altivec_u16);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmax_hu(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E16M1(8);
+        vuint16m1_t va = SIMDE_RVV_VLE16_U16M1(a_.u16, vl);
+        vuint16m1_t vb = SIMDE_RVV_VLE16_U16M1(b_.u16, vl);
+        vuint16m1_t vr = SIMDE_RVV_VMAXU_VV_U16M1(va, vb, vl);
+        SIMDE_RVV_VSE16_U16M1(r_.u16, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.u16) / sizeof(r_.u16[0])) ; i++) {
@@ -1809,6 +1843,14 @@ simde_mm_max_epu32 (simde__m128i a, simde__m128i b) {
       r_.altivec_u32 = vec_max(a_.altivec_u32, b_.altivec_u32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmax_wu(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vuint32m1_t va = SIMDE_RVV_VLE32_U32M1(a_.u32, vl);
+        vuint32m1_t vb = SIMDE_RVV_VLE32_U32M1(b_.u32, vl);
+        vuint32m1_t vr = SIMDE_RVV_VMAXU_VV_U32M1(va, vb, vl);
+        SIMDE_RVV_VSE32_U32M1(r_.u32, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.u32) / sizeof(r_.u32[0])) ; i++) {
@@ -1843,6 +1885,14 @@ simde_mm_min_epi8 (simde__m128i a, simde__m128i b) {
       r_.altivec_i8 = vec_min(a_.altivec_i8, b_.altivec_i8);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmin_b(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E8M1(16);
+        vint8m1_t va = SIMDE_RVV_VLE8_I8M1(a_.i8, vl);
+        vint8m1_t vb = SIMDE_RVV_VLE8_I8M1(b_.i8, vl);
+        vint8m1_t vr = SIMDE_RVV_VMIN_VV_I8M1(va, vb, vl);
+        SIMDE_RVV_VSE8_I8M1(r_.i8, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i8) / sizeof(r_.i8[0])) ; i++) {
@@ -1877,6 +1927,14 @@ simde_mm_min_epi32 (simde__m128i a, simde__m128i b) {
       r_.altivec_i32 = vec_min(a_.altivec_i32, b_.altivec_i32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmin_w(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vint32m1_t va = SIMDE_RVV_VLE32_I32M1(a_.i32, vl);
+        vint32m1_t vb = SIMDE_RVV_VLE32_I32M1(b_.i32, vl);
+        vint32m1_t vr = SIMDE_RVV_VMIN_VV_I32M1(va, vb, vl);
+        SIMDE_RVV_VSE32_I32M1(r_.i32, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i32) / sizeof(r_.i32[0])) ; i++) {
@@ -1914,6 +1972,14 @@ simde_mm_min_epu16 (simde__m128i a, simde__m128i b) {
       r_.altivec_u16 = vec_min(a_.altivec_u16, b_.altivec_u16);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmin_hu(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E16M1(8);
+        vuint16m1_t va = SIMDE_RVV_VLE16_U16M1(a_.u16, vl);
+        vuint16m1_t vb = SIMDE_RVV_VLE16_U16M1(b_.u16, vl);
+        vuint16m1_t vr = SIMDE_RVV_VMINU_VV_U16M1(va, vb, vl);
+        SIMDE_RVV_VSE16_U16M1(r_.u16, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.u16) / sizeof(r_.u16[0])) ; i++) {
@@ -1948,6 +2014,14 @@ simde_mm_min_epu32 (simde__m128i a, simde__m128i b) {
       r_.altivec_u32 = vec_min(a_.altivec_u32, b_.altivec_u32);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmin_wu(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vuint32m1_t va = SIMDE_RVV_VLE32_U32M1(a_.u32, vl);
+        vuint32m1_t vb = SIMDE_RVV_VLE32_U32M1(b_.u32, vl);
+        vuint32m1_t vr = SIMDE_RVV_VMINU_VV_U32M1(va, vb, vl);
+        SIMDE_RVV_VSE32_U32M1(r_.u32, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.u32) / sizeof(r_.u32[0])) ; i++) {
@@ -2083,6 +2157,14 @@ simde_mm_mullo_epi32 (simde__m128i a, simde__m128i b) {
       r_.wasm_v128 = wasm_i32x4_mul(a_.wasm_v128, b_.wasm_v128);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vmul_w(a_.lsx_i64, b_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E32M1(4);
+        vint32m1_t va = SIMDE_RVV_VLE32_I32M1(a_.i32, vl);
+        vint32m1_t vb = SIMDE_RVV_VLE32_I32M1(b_.i32, vl);
+        vint32m1_t vr = SIMDE_RVV_VMUL_VV_I32M1(va, vb, vl);
+        SIMDE_RVV_VSE32_I32M1(r_.i32, vr, vl);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i32) / sizeof(r_.i32[0])) ; i++) {

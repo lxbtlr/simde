@@ -333,6 +333,16 @@ simde_mm_cmpgt_epi64 (simde__m128i a, simde__m128i b) {
       r_.wasm_v128 = wasm_i64x2_gt(a_.wasm_v128, b_.wasm_v128);
     #elif defined(SIMDE_LOONGARCH_LSX_NATIVE)
       r_.lsx_i64 = __lsx_vslt_d(b_.lsx_i64, a_.lsx_i64);
+    #elif defined(SIMDE_RISCV_V_NATIVE)
+      {
+        size_t vl = SIMDE_RVV_VSETVL_E64M1(2);
+        vint64m1_t va = SIMDE_RVV_VLE64_I64M1(a_.i64, vl);
+        vint64m1_t vb = SIMDE_RVV_VLE64_I64M1(b_.i64, vl);
+        vbool64_t mask = SIMDE_RVV_VMSGT_VV_I64M1(va, vb, vl);
+        vint64m1_t zeros = SIMDE_RVV_VMV_V_X_I64M1(0, vl);
+        vint64m1_t vr = SIMDE_RVV_VMERGE_VXM_I64M1(mask, zeros, -1, vl);
+        SIMDE_RVV_VSE64_I64M1(r_.i64, vr, vl);
+      }
     #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.i64 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.i64), a_.i64 > b_.i64);
     #else
