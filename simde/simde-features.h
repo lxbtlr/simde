@@ -585,9 +585,13 @@
     #define SIMDE_NATURAL_FLOAT_VECTOR_SIZE (128)
     #define SIMDE_NATURAL_INT_VECTOR_SIZE (64)
     #define SIMDE_NATURAL_DOUBLE_VECTOR_SIZE (0)
-  #elif defined(SIMDE_RISCV_V_NATIVE) && defined(__riscv_v_fixed_vlen)
-        //FIXME : SIMDE_NATURAL_VECTOR_SIZE == __riscv_v_fixed_vlen
-        #define SIMDE_NATURAL_VECTOR_SIZE (128)
+  #elif defined(SIMDE_RISCV_V_NATIVE)
+    #if defined(__riscv_v_fixed_vlen)
+      #define SIMDE_NATURAL_VECTOR_SIZE (__riscv_v_fixed_vlen)
+    #else
+      /* RVV 0.9 or VLA: assume minimum VLEN of 128 */
+      #define SIMDE_NATURAL_VECTOR_SIZE (128)
+    #endif
   #endif
 
   #if !defined(SIMDE_NATURAL_VECTOR_SIZE)
