@@ -96,7 +96,11 @@ simde_mm512_slli_epi16 (simde__m512i a, const unsigned int imm8)
       r_,
       a_ = simde__m512i_to_private(a);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_slli_epi16(a_.m256i[i], HEDLEY_STATIC_CAST(int, imm8));
+      }
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
       if(imm8 < 16)
         r_.i16 = HEDLEY_STATIC_CAST(__typeof__(r_.i16), (a_.i16 << HEDLEY_STATIC_CAST(int16_t, imm8)));
       else

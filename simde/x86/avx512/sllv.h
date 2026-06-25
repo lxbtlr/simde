@@ -29,6 +29,7 @@
 #define SIMDE_X86_AVX512_SLLV_H
 
 #include "types.h"
+#include "../avx2.h"
 #include "mov.h"
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -89,7 +90,11 @@ simde_mm512_sllv_epi16 (simde__m512i a, simde__m512i b) {
     b_ = simde__m512i_to_private(b),
     r_;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+      r_.m256i[i] = simde_mm256_sllv_epi16(a_.m256i[i], b_.m256i[i]);
+    }
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.u16 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.u16), (b_.u16 < 16)) & (a_.u16 << b_.u16);
   #else
     SIMDE_VECTORIZE
@@ -116,7 +121,11 @@ simde_mm512_sllv_epi32 (simde__m512i a, simde__m512i b) {
     b_ = simde__m512i_to_private(b),
     r_;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+      r_.m256i[i] = simde_mm256_sllv_epi32(a_.m256i[i], b_.m256i[i]);
+    }
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.u32 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.u32), (b_.u32 < 32)) & (a_.u32 << b_.u32);
   #else
     SIMDE_VECTORIZE
@@ -143,7 +152,11 @@ simde_mm512_sllv_epi64 (simde__m512i a, simde__m512i b) {
     b_ = simde__m512i_to_private(b),
     r_;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+      r_.m256i[i] = simde_mm256_sllv_epi64(a_.m256i[i], b_.m256i[i]);
+    }
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.u64 = HEDLEY_REINTERPRET_CAST(__typeof__(r_.u64), (b_.u64 < 64)) & (a_.u64 << b_.u64);
   #else
     SIMDE_VECTORIZE

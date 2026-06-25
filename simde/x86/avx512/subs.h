@@ -47,7 +47,11 @@ simde_mm512_subs_epi8 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if !defined(HEDLEY_INTEL_VERSION)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_subs_epi8(a_.m256i[i], b_.m256i[i]);
+      }
+    #elif !defined(HEDLEY_INTEL_VERSION)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
         r_.m256i[i] = simde_mm256_subs_epi8(a_.m256i[i], b_.m256i[i]);
@@ -106,7 +110,11 @@ simde_mm512_subs_epi16 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-      #if !defined(HEDLEY_INTEL_VERSION)
+      #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+        for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+          r_.m256i[i] = simde_mm256_subs_epi16(a_.m256i[i], b_.m256i[i]);
+        }
+      #elif !defined(HEDLEY_INTEL_VERSION)
         SIMDE_VECTORIZE
         for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
           r_.m256i[i] = simde_mm256_subs_epi16(a_.m256i[i], b_.m256i[i]);
@@ -137,7 +145,11 @@ simde_mm512_subs_epu8 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if !defined(HEDLEY_INTEL_VERSION)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_subs_epu8(a_.m256i[i], b_.m256i[i]);
+      }
+    #elif !defined(HEDLEY_INTEL_VERSION)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
         r_.m128i[i] = simde_mm_subs_epu8(a_.m128i[i], b_.m128i[i]);
@@ -196,7 +208,11 @@ simde_mm512_subs_epu16 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if !defined(HEDLEY_INTEL_VERSION)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_subs_epu16(a_.m256i[i], b_.m256i[i]);
+      }
+    #elif !defined(HEDLEY_INTEL_VERSION)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
         r_.m256i[i] = simde_mm256_subs_epu16(a_.m256i[i], b_.m256i[i]);

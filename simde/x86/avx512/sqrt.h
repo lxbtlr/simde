@@ -45,9 +45,10 @@ simde_mm512_sqrt_ps (simde__m512 a) {
       r_,
       a_ = simde__m512_to_private(a);
 
-    #if defined(SIMDE_X86_AVX_NATIVE)
-      r_.m256[0] = simde_mm256_sqrt_ps(a_.m256[0]);
-      r_.m256[1] = simde_mm256_sqrt_ps(a_.m256[1]);
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256) / sizeof(r_.m256[0])) ; i++) {
+        r_.m256[i] = simde_mm256_sqrt_ps(a_.m256[i]);
+      }
     #elif defined(simde_math_sqrtf)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
@@ -88,9 +89,10 @@ simde_mm512_sqrt_pd (simde__m512d a) {
       r_,
       a_ = simde__m512d_to_private(a);
 
-    #if defined(SIMDE_X86_AVX_NATIVE)
-      r_.m256d[0] = simde_mm256_sqrt_pd(a_.m256d[0]);
-      r_.m256d[1] = simde_mm256_sqrt_pd(a_.m256d[1]);
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256d) / sizeof(r_.m256d[0])) ; i++) {
+        r_.m256d[i] = simde_mm256_sqrt_pd(a_.m256d[i]);
+      }
     #elif defined(simde_math_sqrt)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.f64) / sizeof(r_.f64[0])) ; i++) {

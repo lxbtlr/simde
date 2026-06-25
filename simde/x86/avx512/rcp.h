@@ -46,10 +46,16 @@ simde_mm512_rcp14_ps (simde__m512 a) {
       r_,
       a_ = simde__m512_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
-      r_.f32[i] = SIMDE_FLOAT32_C(1.0) / a_.f32[i];
-    }
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256) / sizeof(r_.m256[0])) ; i++) {
+        r_.m256[i] = simde_mm256_rcp_ps(a_.m256[i]);
+      }
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
+        r_.f32[i] = SIMDE_FLOAT32_C(1.0) / a_.f32[i];
+      }
+    #endif
 
     return simde__m512_from_private(r_);
   #endif

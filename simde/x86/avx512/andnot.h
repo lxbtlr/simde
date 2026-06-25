@@ -107,9 +107,10 @@ simde_mm512_andnot_si512 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if defined(SIMDE_X86_AVX2_NATIVE)
-      r_.m256i[0] = simde_mm256_andnot_si256(a_.m256i[0], b_.m256i[0]);
-      r_.m256i[1] = simde_mm256_andnot_si256(a_.m256i[1], b_.m256i[1]);
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_andnot_si256(a_.m256i[i], b_.m256i[i]);
+      }
     #else
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i32f) / sizeof(r_.i32f[0])) ; i++) {

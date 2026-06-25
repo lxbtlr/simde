@@ -29,6 +29,7 @@
 #define SIMDE_X86_AVX512_SRAI_H
 
 #include "types.h"
+#include "../avx2.h"
 #include "mov.h"
 
 HEDLEY_DIAGNOSTIC_PUSH
@@ -45,7 +46,11 @@ simde_mm512_srai_epi16 (simde__m512i a, const int imm8) {
 
   if (shift > 15) shift = 15;
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+      r_.m256i[i] = simde_mm256_srai_epi16(a_.m256i[i], HEDLEY_STATIC_CAST(int, shift));
+    }
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.i16 = a_.i16 >> HEDLEY_STATIC_CAST(int16_t, shift);
   #else
     SIMDE_VECTORIZE
@@ -71,7 +76,11 @@ simde_mm512_srai_epi32 (simde__m512i a, const unsigned int imm8) {
     r_,
     a_ = simde__m512i_to_private(a);
 
-  #if defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+      r_.m256i[i] = simde_mm256_srai_epi32(a_.m256i[i], HEDLEY_STATIC_CAST(int, imm8));
+    }
+  #elif defined(SIMDE_VECTOR_SUBSCRIPT_SCALAR)
     r_.i32 = a_.i32 >> HEDLEY_STATIC_CAST(int32_t, imm8);
   #else
     SIMDE_VECTORIZE

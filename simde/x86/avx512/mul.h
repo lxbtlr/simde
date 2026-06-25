@@ -47,7 +47,11 @@ simde_mm512_mul_ps (simde__m512 a, simde__m512 b) {
       a_ = simde__m512_to_private(a),
       b_ = simde__m512_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256) / sizeof(r_.m256[0])) ; i++) {
+        r_.m256[i] = simde_mm256_mul_ps(a_.m256[i], b_.m256[i]);
+      }
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.f32 = a_.f32 * b_.f32;
     #else
       SIMDE_VECTORIZE
@@ -103,7 +107,11 @@ simde_mm512_mul_pd (simde__m512d a, simde__m512d b) {
       a_ = simde__m512d_to_private(a),
       b_ = simde__m512d_to_private(b);
 
-    #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256d) / sizeof(r_.m256d[0])) ; i++) {
+        r_.m256d[i] = simde_mm256_mul_pd(a_.m256d[i], b_.m256d[i]);
+      }
+    #elif defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
       r_.f64 = a_.f64 * b_.f64;
     #else
       SIMDE_VECTORIZE
@@ -159,7 +167,11 @@ simde_mm512_mul_epi32 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_SHUFFLE_VECTOR_)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_mul_epi32(a_.m256i[i], b_.m256i[i]);
+      }
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_SHUFFLE_VECTOR_)
       simde__m512i_private x;
       __typeof__(r_.i64) ta, tb;
 
@@ -222,7 +234,11 @@ simde_mm512_mul_epu32 (simde__m512i a, simde__m512i b) {
       a_ = simde__m512i_to_private(a),
       b_ = simde__m512i_to_private(b);
 
-    #if defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_SHUFFLE_VECTOR_)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_mul_epu32(a_.m256i[i], b_.m256i[i]);
+      }
+    #elif defined(SIMDE_CONVERT_VECTOR_) && defined(SIMDE_SHUFFLE_VECTOR_)
       simde__m512i_private x;
       __typeof__(r_.u64) ta, tb;
 

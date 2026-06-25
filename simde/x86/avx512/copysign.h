@@ -29,6 +29,7 @@
 #define SIMDE_X86_AVX512_COPYSIGN_H
 
 #include "types.h"
+#include "../avx.h"
 #include "mov.h"
 #include "and.h"
 #include "andnot.h"
@@ -46,7 +47,11 @@ simde_x_mm512_copysign_ps(simde__m512 dest, simde__m512 src) {
     dest_ = simde__m512_to_private(dest),
     src_ = simde__m512_to_private(src);
 
-  #if defined(simde_math_copysignf)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256) / sizeof(r_.m256[0])) ; i++) {
+      r_.m256[i] = simde_x_mm256_copysign_ps(dest_.m256[i], src_.m256[i]);
+    }
+  #elif defined(simde_math_copysignf)
     SIMDE_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.f32) / sizeof(r_.f32[0])) ; i++) {
       r_.f32[i] = simde_math_copysignf(dest_.f32[i], src_.f32[i]);
@@ -67,7 +72,11 @@ simde_x_mm512_copysign_pd(simde__m512d dest, simde__m512d src) {
     dest_ = simde__m512d_to_private(dest),
     src_ = simde__m512d_to_private(src);
 
-  #if defined(simde_math_copysign)
+  #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+    for (size_t i = 0 ; i < (sizeof(r_.m256d) / sizeof(r_.m256d[0])) ; i++) {
+      r_.m256d[i] = simde_x_mm256_copysign_pd(dest_.m256d[i], src_.m256d[i]);
+    }
+  #elif defined(simde_math_copysign)
     SIMDE_VECTORIZE
     for (size_t i = 0 ; i < (sizeof(r_.f64) / sizeof(r_.f64[0])) ; i++) {
       r_.f64[i] = simde_math_copysign(dest_.f64[i], src_.f64[i]);
