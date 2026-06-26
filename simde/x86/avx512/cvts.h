@@ -264,15 +264,21 @@ simde_mm512_cvtsepi16_epi8 (simde__m512i a) {
     simde__m256i_private r_;
     simde__m512i_private a_ = simde__m512i_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(r_.i8) / sizeof(r_.i8[0])) ; i++) {
-      r_.i8[i] =
-          (a_.i16[i] < INT8_MIN)
-            ? (INT8_MIN)
-            : ((a_.i16[i] > INT8_MAX)
-              ? (INT8_MAX)
-              : HEDLEY_STATIC_CAST(int8_t, a_.i16[i]));
-    }
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
+        r_.m128i[i] = simde_mm256_cvtsepi16_epi8(a_.m256i[i]);
+      }
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(r_.i8) / sizeof(r_.i8[0])) ; i++) {
+        r_.i8[i] =
+            (a_.i16[i] < INT8_MIN)
+              ? (INT8_MIN)
+              : ((a_.i16[i] > INT8_MAX)
+                ? (INT8_MAX)
+                : HEDLEY_STATIC_CAST(int8_t, a_.i16[i]));
+      }
+    #endif
 
     return simde__m256i_from_private(r_);
   #endif
@@ -429,15 +435,21 @@ simde_mm512_cvtsepi32_epi16 (simde__m512i a) {
     simde__m256i_private r_;
     simde__m512i_private a_ = simde__m512i_to_private(a);
 
-    SIMDE_VECTORIZE
-    for (size_t i = 0 ; i < (sizeof(a_.i32) / sizeof(a_.i32[0])) ; i++) {
-      r_.i16[i] =
-        (a_.i32[i] < INT16_MIN)
-          ? (INT16_MIN)
-          : ((a_.i32[i] > INT16_MAX)
-            ? (INT16_MAX)
-            : HEDLEY_STATIC_CAST(int16_t, a_.i32[i]));
-    }
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m128i) / sizeof(r_.m128i[0])) ; i++) {
+        r_.m128i[i] = simde_mm256_cvtsepi32_epi16(a_.m256i[i]);
+      }
+    #else
+      SIMDE_VECTORIZE
+      for (size_t i = 0 ; i < (sizeof(a_.i32) / sizeof(a_.i32[0])) ; i++) {
+        r_.i16[i] =
+          (a_.i32[i] < INT16_MIN)
+            ? (INT16_MIN)
+            : ((a_.i32[i] > INT16_MAX)
+              ? (INT16_MAX)
+              : HEDLEY_STATIC_CAST(int16_t, a_.i32[i]));
+      }
+    #endif
 
     return simde__m256i_from_private(r_);
   #endif

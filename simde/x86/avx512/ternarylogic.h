@@ -3377,7 +3377,11 @@ simde_x_ternarylogic_0xff_impl_(uint_fast32_t a, uint_fast32_t b, uint_fast32_t 
       b_ = simde__m512i_to_private(b),
       c_ = simde__m512i_to_private(c);
 
-    #if defined(SIMDE_TERNARYLOGIC_COMPRESSION)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_ternarylogic_epi32(a_.m256i[i], b_.m256i[i], c_.m256i[i], imm8);
+      }
+    #elif defined(SIMDE_TERNARYLOGIC_COMPRESSION)
       int to_do, mask;
       #if defined(SIMDE_VECTOR_SUBSCRIPT_OPS)
         simde__m512i_private t_;

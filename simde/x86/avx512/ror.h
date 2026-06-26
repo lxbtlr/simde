@@ -180,7 +180,11 @@ SIMDE_BEGIN_DECLS_
       r_,
       a_ = simde__m512i_to_private(a);
 
-    #if defined(SIMDE_POWER_ALTIVEC_P6_NATIVE)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_ror_epi32(a_.m256i[i], imm8);
+      }
+    #elif defined(SIMDE_POWER_ALTIVEC_P6_NATIVE)
       for (size_t i = 0 ; i < (sizeof(r_.m128i_private) / sizeof(r_.m128i_private[0])) ; i++) {
         r_.m128i_private[i].altivec_i32 = vec_rl(a_.m128i_private[i].altivec_i32, vec_splats(HEDLEY_STATIC_CAST(unsigned int, 32 - imm8)));
       }
@@ -376,7 +380,11 @@ SIMDE_BEGIN_DECLS_
       r_,
       a_ = simde__m512i_to_private(a);
 
-    #if defined(SIMDE_POWER_ALTIVEC_P8_NATIVE)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_ror_epi64(a_.m256i[i], imm8);
+      }
+    #elif defined(SIMDE_POWER_ALTIVEC_P8_NATIVE)
       for (size_t i = 0 ; i < (sizeof(r_.m128i_private) / sizeof(r_.m128i_private[0])) ; i++) {
         r_.m128i_private[i].altivec_i64 = vec_rl(a_.m128i_private[i].altivec_i64, vec_splats(HEDLEY_STATIC_CAST(unsigned long long, 64 - imm8)));
       }

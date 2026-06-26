@@ -29,6 +29,7 @@
 
 #include "types.h"
 #include "mov.h"
+#include "../avx2.h"
 
 HEDLEY_DIAGNOSTIC_PUSH
 SIMDE_DISABLE_UNWANTED_DIAGNOSTICS
@@ -107,7 +108,11 @@ simde_mm512_cvttps_epi32 (simde__m512 a) {
     simde__m512i_private r_;
     simde__m512_private a_ = simde__m512_to_private(a);
 
-    #if defined(simde_math_truncf)
+    #if SIMDE_NATURAL_VECTOR_SIZE_LE(256)
+      for (size_t i = 0 ; i < (sizeof(r_.m256i) / sizeof(r_.m256i[0])) ; i++) {
+        r_.m256i[i] = simde_mm256_cvttps_epi32(a_.m256[i]);
+      }
+    #elif defined(simde_math_truncf)
       SIMDE_VECTORIZE
       for (size_t i = 0 ; i < (sizeof(r_.i32) / sizeof(r_.i32[0])) ; i++) {
         r_.i32[i] = SIMDE_CONVERT_FTOI(int32_t, simde_math_truncf(a_.f32[i]));
